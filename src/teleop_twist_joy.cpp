@@ -33,7 +33,7 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 
 #include <rclcpp/rclcpp.hpp>
 #include <rclcpp_components/register_node_macro.hpp>
-#include <kr0003_msgs/msg/stop.hpp>
+#include <std_msgs/msg/bool.hpp>
 #include <rcutils/logging_macros.h>
 #include <sensor_msgs/msg/joy.hpp>
 
@@ -57,7 +57,7 @@ struct TeleopTwistJoy::Impl
 
   rclcpp::Subscription<sensor_msgs::msg::Joy>::SharedPtr joy_sub;
   rclcpp::Publisher<geometry_msgs::msg::Twist>::SharedPtr cmd_vel_pub;
-  rclcpp::Publisher<kr0003_msgs::msg::Stop>::SharedPtr stop_pub; 
+  rclcpp::Publisher<std_msgs::msg::Bool>::SharedPtr stop_pub; 
 
   bool require_enable_button;
   int64_t enable_button;
@@ -81,7 +81,7 @@ TeleopTwistJoy::TeleopTwistJoy(const rclcpp::NodeOptions& options) : Node("teleo
   pimpl_ = new Impl;
 
   pimpl_->cmd_vel_pub = this->create_publisher<geometry_msgs::msg::Twist>("cmd_vel", 10);
-  pimpl_->stop_pub = this->create_publisher<kr0003_msgs::msg::Stop>("emergency_stop", 10);
+  pimpl_->stop_pub = this->create_publisher<std_msgs::msg::Bool>("emergency_stop", 10);
   pimpl_->joy_sub = this->create_subscription<sensor_msgs::msg::Joy>("joy", rclcpp::QoS(10),
     std::bind(&TeleopTwistJoy::Impl::joyCallback, this->pimpl_, std::placeholders::_1));
 
@@ -377,9 +377,9 @@ void TeleopTwistJoy::Impl::joyCallback(const sensor_msgs::msg::Joy::SharedPtr jo
   }
   if (joy_msg->buttons[emergency_stop_button])
   {
-    auto stop_msg = std::make_unique<kr0003_msgs::msg::Stop>();
+    auto stop_msg = std::make_unique<std_msgs::msg::Bool>();
 
-    stop_msg->emergency_stop = true;
+    stop_msg->data = true;
     stop_pub->publish(std::move(stop_msg));
   }
 }
