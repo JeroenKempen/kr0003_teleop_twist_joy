@@ -80,7 +80,7 @@ TeleopTwistJoy::TeleopTwistJoy(const rclcpp::NodeOptions& options) : Node("teleo
 {
   pimpl_ = new Impl;
 
-  pimpl_->cmd_vel_pub = this->create_publisher<geometry_msgs::msg::Twist>("cmd_vel", 10);
+  pimpl_->cmd_vel_pub = this->create_publisher<geometry_msgs::msg::Twist>("joy_vel", 10);
   pimpl_->stop_pub = this->create_publisher<std_msgs::msg::Bool>("emergency_stop", 10);
   pimpl_->joy_sub = this->create_subscription<sensor_msgs::msg::Joy>("joy", rclcpp::QoS(10),
     std::bind(&TeleopTwistJoy::Impl::joyCallback, this->pimpl_, std::placeholders::_1));
